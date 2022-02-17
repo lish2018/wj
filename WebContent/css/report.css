@@ -1,0 +1,57 @@
+#div_center {
+    background-color: white;
+    width: 1140px;
+    margin: 5% auto;
+}
+
+#table_bar {
+    margin-top: 2%;
+    margin-left: 10%;
+    width: 400px;
+    height: 300px;
+    float: left;
+}
+
+#table_pie {
+    margin-top: 2%;
+    margin-right: 1%;
+    width: 400px;
+    height: 300px;
+    float: right;
+}
+
+#table_pie div{
+    width: 200px;
+    height: 130px;
+    margin: 0;
+    float: left;
+}
+
+.ui-datepicker-next {
+    float: right;
+}
+
+
+.ui-datepicker {
+    background-color: white;
+    
+}
+
+.ui-datepicker span:hover ,
+.ui-datepicker td:hover {
+    background-color: rgb(32, 73, 128);
+    color: chocolate;
+}
+
+.ui-datepicker td,
+.ui-datepicker th{
+	height:20px;
+}
+
+.ui-datepicker-month {
+    width: 50%;
+}
+
+.ui-datepicker-year {
+    width: 50%;
+}

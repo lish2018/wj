@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csxh.dao.AdminPageDao">
+	<!-- 分页SQL语句 -->
+  	<select id="selectAdminsByPage" resultMap="adminMap">
+    	SELECT 
+			a.`id`,
+			a.`adminname`,
+			a.`password`,
+			a.`email`,
+			a.`flag`,
+			a.`phone`,
+			a.`salt`,
+			r.`id` rid,
+			r.`role_name` rname,
+			r.`remark` rremark
+  		FROM admin a
+    	LEFT JOIN role r ON a.`roleId`=r.`id`
+    	<where>
+			<if test="username != null">
+				a.adminname LIKE concat('%', #{username}, '%')
+			</if>
+			<if test="username != null">
+				AND a.adminname != #{myself}
+			</if>
+    	</where>
+    	ORDER BY a.id DESC
+    	LIMIT #{startPos},#{pageCount} 
+  	</select>
+  	<!-- 取得记录的总数 -->
+  	<select id="getAdminsTotalCount" resultType="int">
+    	select count(*) from admin  
+    	<where>
+			<if test="username != null">
+				adminname like concat('%', #{username}, '%')
+			</if>
+			<if test="username != null">
+				and adminname != #{myself}
+			</if>
+    	</where>
+  	</select>
+  	
+  	
+  	<resultMap type="com.csxh.entity.Admin" id="adminMap">
+		<id property="id" column="id" />
+		<result property="adminname" column="adminname" />
+		<result property="password" column="password" />
+		<result property="email" column="email" />
+		<result property="flag" column="flag" />
+		<result property="phone" column="phone" />
+		<result property="salt" column="salt" />
+		
+		<association property="role" javaType="com.csxh.entity.Role">
+			<id property="id" column="rid" />
+			<result property="roleName" column="rname" />
+			<result property="remark" column="rremark" />
+		</association>
+	</resultMap>
+	
+</mapper>

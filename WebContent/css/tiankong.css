@@ -1,0 +1,75 @@
+.Cbox{
+	background-color: #FFE4E1;
+	border:solid 1px #458B00 ;
+}
+.Cbox span{
+	font:bold 14px '宋体';
+}
+.Cbox .Cform{
+	margin-left: 40px;
+	margin-top: 20px;
+	margin-right: 40px;
+	margin-bottom: 20px;
+}
+.Cform .body1{
+	margin-top: 7px;
+	margin-bottom: 7px;
+}
+.Cform .table1{
+	text-align: center;
+	border: solid 1px #FFDAB9;
+}
+.Cform .table1 .text{
+	width: 500px;
+	height: 15px;
+}
+.Cform .table1 th{
+	font:normal 16px '宋体';
+}
+.Cform .body2{
+	font:normal 12px '宋体';
+	margin-bottom: 7px;
+}
+.Cform .body2 input{
+	vertical-align: middle;
+}
+.Cform .btn{
+	width: 754px;
+	font:bold 14px '宋体';
+	color: #F5FFFA;
+	background-color: #CDC673;
+	border: solid 1px #FFE4B5;
+}
+.Cform .btn:hover{
+	background-color: orange;
+}
+
+.Cform .table1 .btn1{
+	border-width: 0px 0px 0px 0px;
+	font:bold 20px '宋体';
+	color: green;
+	background-color:#FFE4E1;
+	outline:none;
+}
+.Cform .table1 .btn2{
+	border-width: 0px 0px 0px 0px;
+	font:bold 20px '宋体';
+	color: red;
+	background-color:#FFE4E1;
+	outline:none;
+}
+#tbody td .Cnum{
+	width: 30px;
+}
+.Cform .textm{
+	width: 20px;
+}
+.Cform .body1 .text{
+	height: 28px;
+}	
+
+.Cform .body1 .score{
+	width:100px;
+}
+#tbody th{padding:0px 5px;}
+

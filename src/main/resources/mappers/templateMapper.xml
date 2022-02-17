@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csxh.dao.TemplateDao">
+	<!-- 返回问卷列表 -->
+	<select id="getTemplateList" parameterType="map" resultMap="adminTemplate">
+		select q.*,a.id aid,a.adminname a_adminname
+		from template q,admin a where q.adminId = a.id 
+			<if test="name != null">
+				and title like concat('%', #{name}, '%')
+			</if>
+			<if test="adminId != null">
+				and adminId = #{adminId}
+			</if>
+			order by q.createTime DESC
+		<if test="startIndex!=null">
+			limit #{startIndex}, #{pageCount};
+		</if>
+	</select>
+
+	
+	<select id="getTemplateQuestionsListByTemplateId" resultType="templatequestion">
+		SELECT id,templateId,title,TYPE,isRequired,number,TEXT,score,isKey
+		FROM xhwj_database.templatequestion
+		WHERE templateId = #{templateId}
+	</select> 
+	
+	
+	<!-- 添加问卷 -->
+	<insert id="addTemplate" parameterType="com.csxh.entity.Template">
+		INSERT INTO template 
+		(adminId,title,`type`,createTime) 
+		VALUES
+		(#{admin.id},#{title},#{type},now());
+		  <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		    SELECT LAST_INSERT_ID()
+		  </selectKey>
+	</insert>
+	
+	<!-- 添加问卷的题目 -->
+	<insert id="addTemplateQuestion" parameterType="java.util.List">
+		insert into templatequestion (templateId,title,type,isRequired,number,text,score,isKey) 
+		values 
+		<foreach collection="list" item="t" index="index" separator=",">
+			(
+				#{t.template.id},
+				#{t.title},
+				#{t.type},
+				#{t.isRequired},
+				#{t.number},
+				#{t.text},
+				#{t.score},
+				#{t.isKey}
+			)
+		</foreach>
+	</insert>
+	
+	<!-- 删除问卷以及问卷的题目 -->
+	<delete id="deleteTemplateQuestionById" parameterType="int">
+		delete from template where id = #{id};
+		delete from templatequestion where templateId = #{id};
+	</delete>
+	
+	
+	<select id="getTemplateQuestionsList" resultMap="templatequestions">
+		SELECT
+		q.id as qid,q.templateId,q.title as qtitle,q.type
+		qtype,q.isRequired,q.number,q.text,q.score,q.isKey,
+		qa.id as qaid,qa.title as qatitle,qa.type qatype,qa.createTime
+		FROM
+		templatequestion q,
+		template qa
+		WHERE
+		q.templateId = qa.id and templateId = #{templateId} order by number ;
+	</select>
+	<resultMap type="TemplateQuestion" id="templatequestions">
+		<result property="id" column="qid" />
+		<result property="title" column="qtitle" />
+		<result property="type" column="qtype" />
+		<result property="isRequired" column="isRequired" />
+		<result property="number" column="number" />
+		<result property="text" column="text" />
+		<result property="score" column="score" />
+		<result property="isKey" column="isKey"/>
+		<association property="template" javaType="Template">
+			<result property="id" column="qaid" />
+			<result property="title" column="qatitle" />
+			<result property="type" column="qatype" />
+			<result property="createTime" column="createTime" />
+		</association>
+	</resultMap>
+	
+	<!-- 根据id找到问卷 -->
+	<select id="getTemplateById" resultType="com.csxh.entity.Template">
+		select * from template where id = #{id};
+	</select>
+	
+	<!-- 更新问卷 -->
+	<update id="updateTemplate" parameterType="com.csxh.entity.Template">
+		update template set title = #{title} ,type = #{type}
+		where id = #{id};
+	</update>
+	
+	
+	<!-- 更新问卷的题目 -->
+	<update id="updateTemplateQuestion" parameterType="java.util.List">
+		<if test="list!=null">
+			<foreach collection="list" item="q" index= "index" open="" close="" separator =";">
+                update templatequestion
+                <set>
+                    title = #{q.title},
+                    type = #{q.type},
+                    isRequired = #{q.isRequired},
+                    number = #{q.number},
+                    text = #{q.text}
+                    <if test="q.score!=null">
+                    	,score = #{q.score}
+                    </if>
+                    <if test="q.isKey!=null">
+                    	,score = #{q.isKey}
+                    </if>
+                </set>
+                <where>
+                    id=#{q.id}
+                </where>
+            </foreach>
+		</if>
+	</update>
+	
+	
+	<!-- 问卷的总数量 -->
+	<select id="getTemplateCount" parameterType="map" resultType="int">
+		select count(*) from template 
+		<where>
+			<if test="name != null">
+				title like concat('%', #{name}, '%')
+			</if>
+			<if test="adminId != null">
+				and adminId = #{adminId}
+			</if>
+		</where>
+	</select>
+	
+	
+	
+	<!-- 搜索问卷 -->
+	<select id="searchTemplate" resultMap="adminTemplate">
+		select q.*,a.id aid,a.adminname a_adminname
+		from template q,admin a where q.adminid = a.id
+		<if test="keyword!=null">
+			and title like concat("%",#{keyword},"%");
+		</if>
+	</select>
+	
+	<!-- 结果集映射 -->
+	<resultMap type="template" id="adminTemplate">
+		<result property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="type" column="type"/>
+		<result property="createTime" column="createTime"/>
+		<association property="admin" javaType="admin">
+			<result property="id" column="aid"/>
+			<result property="adminname" column="a_adminname"/>
+		</association>
+	</resultMap>
+	
+	<!-- 删除一条问卷的题目信息 -->
+	<delete id="deleteOneTemplateQuestionById">
+		delete from templatequestion where id = #{id};
+	</delete>
+	
+</mapper>

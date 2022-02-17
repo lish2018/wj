@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	">
+	<!--
+	 1.	配置 shiro 的核心组件：securityManager
+	  -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="cacheManager" ref="cacheManager"/> <!-- 配置缓存管理器 -->
+	    <property name="sessionMode" value="native"/>
+	    <property name="realm" ref="AdminRealm"/>
+	</bean>
+	<!--
+	 2.	配置 cacheManager
+	  -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache.xml"></property> 
+	</bean> 
+
+	<!--
+	 3.	配置 Realm
+	  -->
+    <bean id="AdminRealm" class="com.csxh.shiro.realm.AdminRealm">
+    	<property name="credentialsMatcher">
+    		<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+    		<property name="hashAlgorithmName" value="MD5"></property><!--   加密算法	 -->
+    		<property name="hashIterations" value="1024"></property><!--   加密次数	 -->
+    		</bean>
+    	</property>
+	</bean>
+	<!-- 
+	 4.	配置 lifecycleBeanPostProcessor 可以自定的来调用配置在Spring IOC 容器中shiro bean 的生命周期方法
+	  
+	<bean name="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"></bean>
+	
+	
+	 5.	启用 IOC容器中使用shrio的注解，但必须在配置lifecycleBeanPostProcessor之后才可以使用。
+	 
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+              depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+            <property name="securityManager" ref="securityManager"/>
+    </bean> -->
+    
+	<!--
+	 6.	配置ShiroFilter.
+	  -->
+    <!-- 配置shiro的一些拦截规则，id必须和web.xml中的 shiro 拦截器名一致 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+   	<!-- Shiro的核心安全接口,这个属性是必须的 -->  
+	<property name="securityManager" ref="securityManager" />
+	<!-- 身份认证失败，则跳转到登录页面的配置 --> 
+	<property name="loginUrl" value="" />  
+	<!-- 登录成功后的页面 -->
+	<property name="successUrl" value="" />  
+	<!-- 权限认证失败，则跳转到指定页面 --> 
+	<property name="unauthorizedUrl"  value="info.ftl" /><!-- 登录后访问没有权限的页面后跳转的页面 -->
+	
+	<property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"></property>
+	
+	<!-- Shiro连接约束配置,即过滤链的定义 -->  
+	<!--  <property name="filterChainDefinitions">
+		<value>
+			注意：规则是有顺序的，从上到下，拦截范围必须是从小到大的
+			 url = 拦截规则（anon为匿名，authc为要登录后，才能访问，logout登出过滤）
+			
+	 			1.	?:匹配一个字符
+	 			2.	*:匹配零个字符或字符串
+	 			3.	**:匹配路径中的零个或多个路径
+	  		
+	  		/admin/** = roles[AdminiStrator]
+			 /admin/question/ipsearch = anon
+ 			 /login = anon 
+ 			 /upload = anon 
+			 /logout = logout 
+			 
+			 /admin/** = authc
+			 /report/** = authc
+			 /**= anon  
+		</value>
+	</property> -->
+	</bean>
+	<bean id="filterChainDefinitionMap" factory-bean="filterChainDefinitionMapBuilder" factory-method="buildFilterChainDefinitionMap">
+	</bean>
+	<!-- 配置一个bean,该bean 实际上是一个Map,通过实例工厂的方式 -->
+	<bean id="filterChainDefinitionMapBuilder" class="com.csxh.shiro.factory.FilterChainDefinitionMapBuilder"></bean>
+	
+	<!-- 异常处理解析器 -->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+        <props>
+            <prop key="org.apache.shiro.authz.UnauthorizedException">redirect:/unauthorized</prop>
+        </props>
+    </property>
+</bean>
+	
+</beans>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC 
+"-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="logImpl" value="STDOUT_LOGGING"/> <!-- 配置mybatis日志输出 -->
+	</settings>
+	<typeAliases>	<!-- 配置别名 -->
+		<typeAlias type="java.lang.Integer" alias="int"/>
+		<typeAlias type="java.util.Map" alias="map"/>
+		<typeAlias type="java.util.List" alias="list"/>
+		<typeAlias type="java.util.Date" alias="date"/>
+		<typeAlias type="java.lang.String" alias="string"/>
+		
+		<typeAlias type="com.csxh.entity.Admin" alias="admin"/>
+		<typeAlias type="com.csxh.entity.Role" alias="role"/>
+		<typeAlias type="com.csxh.entity.Resource" alias="resource"/>
+		<typeAlias type="com.csxh.entity.Team" alias="team"/>
+		<typeAlias type="com.csxh.entity.Answer" alias="answer"/>
+		<typeAlias type="com.csxh.entity.Questionnaire" alias="questionnaire"/>
+		<typeAlias type="com.csxh.entity.Question" alias="question"/>
+		<typeAlias type="com.csxh.entity.Template" alias="template"/>
+		<typeAlias type="com.csxh.entity.TemplateQuestion" alias="templateQuestion"/>
+		<typeAlias type="com.csxh.entity.Log" alias="log"/>
+	</typeAliases>
+</configuration>

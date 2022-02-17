@@ -1,0 +1,53 @@
+.testItem {
+	margin: 5% auto;
+	width: 1140px;
+	border: solid 1px #000000;
+}
+
+._box {
+	border: solid 1px #000000;
+	height: 100px;
+}
+
+.top_box {
+	height: 40px;
+}
+
+.top_box div {
+	display: inline-block;
+}
+
+.btm_box {
+	height: 40px;
+}
+
+.btm_box div {
+	display: inline-block;
+}
+
+.top_LeftBox {
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.top_RightBox {
+	float: right;
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+.btm_LeftBox {
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.btm_RightBox {
+	float: right;
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+.Lower-layout {
+	height: auto;
+	min-height: 300px;
+}

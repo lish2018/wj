@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	">
+	
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.csxh.util.plantask"></context:component-scan>
+	
+	<bean id="startQuartz" lazy-init="true" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+     		<list>
+     		</list>	
+     	</property>
+    </bean>  
+	 
+	<bean id="quartzManager" class="com.csxh.util.plantask.JobUtil" lazy-init="false" init-method="init" destroy-method="close">  
+	    <property name="sched" ref="startQuartz" />
+	</bean>
+	
+</beans>

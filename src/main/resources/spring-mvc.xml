@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	">
+	
+	
+	<!-- 配置开启注解 -->
+	<context:annotation-config></context:annotation-config>
+	<!-- 扫描 com.hnsd.controller 包下注解 -->
+	<context:component-scan base-package="com.csxh.controller"></context:component-scan>
+
+	
+	<!-- 配置任务调度类的实体 -->
+	<bean id="questionnaireExpired" class="com.csxh.util.plantask.QuestionnaireExpired"></bean>
+	<bean id="admin" class="com.csxh.entity.Admin"></bean>
+	<!-- 配置加密工具类的实体 -->
+	<bean id="passwordHelper" class="com.csxh.tools.PasswordHelper"></bean>
+	
+	<!-- 配置视图解析器 -->
+	<bean id="viewResolverFtl"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <!-- 自定义FreeMarkerView 添加一些通用属性-->
+        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+        <property name="contentType" value="text/html; charset=utf-8" />
+        <property name="cache" value="true" />
+        <property name="suffix" value=".ftl" />
+        <!-- 根目录 -->
+        <property name="requestContextAttribute" value="request" />
+    </bean>
+
+	 <!-- freemarker的配置 -->
+    <bean id="freemarkerConfig" class="com.csxh.tools.ShiroTagFreeMarkerConfigurer">
+        <property name="templateLoaderPath">
+            <value>/</value>
+        </property>
+        <property name="freemarkerSettings"><!-- 设置FreeMarker环境属性 -->
+            <props>
+                <prop key="template_update_delay">5</prop><!--刷新模板的周期，单位为秒 -->
+                <prop key="default_encoding">UTF-8</prop><!--模板的编码格式 -->
+                <prop key="locale">UTF-8</prop><!-- 本地化设置 -->
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="time_format">HH:mm:ss</prop>
+                <prop key="number_format">0.####</prop>
+                <prop key="boolean_format">true,false</prop>
+                <prop key="whitespace_stripping">true</prop>
+                <prop key="tag_syntax">auto_detect</prop>
+                <prop key="url_escaping_charset">UTF-8</prop>
+            </props>
+        </property>
+    </bean> 
+    <bean name="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"></bean>
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+              depends-on="lifecycleBeanPostProcessor">
+              <property name="proxyTargetClass" value="true" />
+    </bean>          
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+            <property name="securityManager" ref="securityManager"/>
+    </bean>
+    
+    <!--将静态资源交由默认的servlet处理-->
+	<mvc:default-servlet-handler />
+	<!--将SwaggerConfig配置类注入-->
+	<bean class="com.csxh.config.SwaggerConfig"/>
+	<!--配置swagger资源不被拦截-->
+	<mvc:resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/" />
+	<mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
+
+	 
+</beans>

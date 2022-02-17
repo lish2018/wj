@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csxh.dao.TeamDao">
+	<select id="getTeamList" resultMap="teamMap">
+		SELECT t.id tid,t.name,t.number,
+		a.Id aid,a.questionnaireId,a.ip,a.commitTime,a.radio,a.checkbox,a.text,a.key,a.score
+		FROM xhwj_database.answer a 
+		LEFT JOIN xhwj_database.team t ON t.id = a.teamId 
+		WHERE a.questionnaireId = #{questionnaireId};
+	</select>
+	<resultMap type="team" id="teamMap">
+		<id column="tid" property="id" />
+		<result column="name" property="name"/>
+		<result column="number" property="number"/>
+		<collection property="answers" javaType="list" ofType="answer">
+			<id column="aid" property="Id"/>
+			<result column="ip" property="ip"/>
+			<result column="commitTime" property="commitTime" />
+			<result column="radio" property="radio"/>
+			<result column="checkbox" property="checkbox"/>
+			<result column="text" property="text"/>
+			<result column="key" property="key"/> 
+			<result column="score" property="score"/> 
+		</collection>
+	</resultMap>
+</mapper>

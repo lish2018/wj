@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csxh.dao.QuestionDao">
+	<!-- 返回问卷列表 -->
+	<select id="getQuestionList" parameterType="map" resultMap="adminQuestionnaire">
+		select q.*,a.id aid,a.adminname a_adminname
+		from questionnaire q,admin a where q.adminId = a.id 
+			<if test="name != null">
+				and title like concat('%', #{name}, '%')
+			</if>
+			<if test="adminId != null">
+				and adminId = #{adminId}
+			</if>
+			order by q.createTime DESC
+		<if test="startIndex!=null">
+			limit #{startIndex}, #{pageCount};
+		</if>
+	</select>
+
+	
+	<select id="getQuestionsListByQuestionnaireId" resultType="question">
+		SELECT id,questionnaireId,title,TYPE,isRequired,number,TEXT,score,isKey
+		FROM xhwj_database.question
+		WHERE questionnaireId = #{questionnaireId}
+	</select> 
+	
+	
+	<!-- 添加问卷 -->
+	<insert id="addQuestionnaire" parameterType="com.csxh.entity.Questionnaire">
+		insert into questionnaire 
+		(adminId,title,type,createTime,endTime,status,url,QRurl,count) 
+		values 
+		(#{admin.id},#{title},#{type},#{createTime},#{endTime},#{status},#{url},#{QRurl},#{count});
+		  <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+		    SELECT LAST_INSERT_ID()
+		  </selectKey>
+	</insert>
+	
+	<!-- 添加问卷的题目 -->
+	<insert id="addQuestion" parameterType="java.util.List">
+		insert into question (questionnaireId,title,type,isRequired,number,text,score,isKey) 
+		values 
+		<foreach collection="list" item="q" index="index" separator=",">
+			(
+				#{q.questionnaire.id},
+				#{q.title},
+				#{q.type},
+				#{q.isRequired},
+				#{q.number},
+				#{q.text},
+				#{q.score},
+				#{q.isKey}
+			)
+		</foreach>
+	</insert>
+	
+	<!-- 删除问卷以及问卷的题目 -->
+	<delete id="deleteQuestionById" parameterType="int">
+		delete from questionnaire where id = #{id};
+		delete from question where questionnaireId = #{id};
+		delete from answer where questionnaireId = #{id};
+		  
+	</delete>
+	
+	
+	<select id="getQuestionsList" resultMap="questions">
+		SELECT
+		q.id as qid,q.questionnaireId,q.title as qtitle,q.type
+		qtype,q.isRequired,q.number,q.text,q.score,q.isKey,
+		qa.id as qaid,qa.title as qatitle,qa.type
+		qatype,qa.createTime,qa.endTime,qa.status,qa.QRurl,qa.count
+		FROM
+		question q,
+		questionnaire qa
+		WHERE
+		q.questionnaireId = qa.id and questionnaireId = #{questionnaireId} order by number ;
+	</select>
+	<resultMap type="Question" id="questions">
+		<result property="id" column="qid" />
+		<result property="title" column="qtitle" />
+		<result property="type" column="qtype" />
+		<result property="isRequired" column="isRequired" />
+		<result property="number" column="number" />
+		<result property="text" column="text" />
+		<result property="score" column="score" />
+		<result property="isKey" column="isKey"/>
+		<association property="questionnaire" javaType="Questionnaire">
+			<result property="id" column="qaid" />
+			<result property="title" column="qatitle" />
+			<result property="type" column="qatype" />
+			<result property="createTime" column="createTime" />
+			<result property="endTime" column="endTime" />
+			<result property="status" column="status" />
+			<result property="QRurl" column="QRurl" />
+			<result property="count" column="count" />
+		</association>
+	</resultMap>
+	
+	<!-- 根据id找到问卷 -->
+	<select id="getQuestionnaireById" resultType="com.csxh.entity.Questionnaire">
+		select * from questionnaire where id = #{id};
+	</select>
+	
+	<!-- 更新问卷 -->
+	<update id="updateQuestionnaire" parameterType="com.csxh.entity.Questionnaire">
+		update questionnaire set title = #{title} ,type = #{type}, count = #{count}
+		where id = #{id};
+	</update>
+	
+	
+	<!-- 更新问卷的题目 -->
+	<update id="updateQuestion" parameterType="java.util.List">
+		<if test="list!=null">
+			<foreach collection="list" item="q" index= "index" open="" close="" separator =";">
+                update question
+                <set>
+                    title = #{q.title},
+                    type = #{q.type},
+                    isRequired = #{q.isRequired},
+                    number = #{q.number},
+                    text = #{q.text}
+                    <if test="q.score!=null">
+                    	,score = #{q.score}
+                    </if>
+                    <if test="q.isKey!=null">
+                    	,score = #{q.isKey}
+                    </if>
+                </set>
+                <where>
+                    id=#{q.id}
+                </where>
+            </foreach>
+		</if>
+	</update>
+	
+	
+	<!-- 问卷的总数量 -->
+	<select id="getQuestionnaireCount" parameterType="map" resultType="int">
+		select count(*) from questionnaire 
+		<where>
+			<if test="name != null">
+				title like concat('%', #{name}, '%')
+			</if>
+			<if test="adminId != null">
+				and adminId = #{adminId}
+			</if>
+		</where>
+	</select>
+	
+	
+	
+	<!-- 搜索问卷 -->
+	<select id="searchQuestionnaire" resultMap="adminQuestionnaire">
+		select q.*,a.id aid,a.adminname a_adminname
+		from questionnaire q,admin a where q.adminid = a.id
+		<if test="keyword!=null">
+			and title like concat("%",#{keyword},"%");
+		</if>
+	</select>
+	
+	<!-- 结果集映射 -->
+	<resultMap type="questionnaire" id="adminQuestionnaire">
+		<result property="id" column="id"/>
+		<result property="title" column="title"/>
+		<result property="type" column="type"/>
+		<result property="createTime" column="createTime"/>
+		<result property="endTime" column="endTime"/>
+		<result property="status" column="status"/>
+		<result property="url" column="url"/>
+		<result property="QRurl" column="QRurl"/>
+		<result property="count" column="count"/>
+		<association property="admin" javaType="admin">
+			<result property="id" column="aid"/>
+			<result property="adminname" column="a_adminname"/>
+		</association>
+		<collection property="answers" ofType="answer" >
+            <result property="id" column="an_id"/>
+        </collection>
+	</resultMap>
+	
+	<!-- 删除一条问卷的题目信息 -->
+	<delete id="deleteOneQuestionById">
+		delete from question where id = #{id};
+	</delete>
+	
+	<!-- 发布 -->
+	<update id="releaseQuestionnaire" parameterType="map">
+		update questionnaire set status = 1,url = #{url},QRurl = #{QRurl} where id = #{id};
+	</update>
+	
+	<!-- 查找一个ip地址 -->
+	<select id="searchIpByQuestionnaireId" resultType="String">
+		select ifnull((select ip  from answer where `ip` = #{ip} and `questionnaireId` = #{questionnaireId} limit 1 ), "0");
+	</select>
+	
+	
+	<!-- 手动截止问卷 -->
+	<update id="stopQuestionniare">
+		update questionnaire set status = 2 where id = #{id};
+	</update>
+	
+	
+	<!--查找班级-->
+	<select id="getTeamList" resultType="team">
+		select id,name from team;
+	</select>
+	
+	<!-- 查询问卷的答卷数量 -->
+	<select id="getAnswersCount" resultType="int">
+		select count(*) from answer  where questionnaireId = #{id};
+	</select>
+	
+	
+	<!-- 修改题目问卷数量 -->
+	<update id="updateQuestionniareCount">
+		update questionnaire set count = #{count} where id = #{id}
+	</update>
+</mapper>

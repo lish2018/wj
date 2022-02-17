@@ -1,0 +1,161 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    background-color: rgb(234, 241, 249);
+}
+
+.main {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    overflow: hidden;
+    /* box-shadow: 0 0 5px #888888; */
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    background-image: url(../img/bg_pc.jpg);
+    background-repeat: no-repeat;
+    background-position-y: bottom left;
+    padding: 10%;
+    padding-bottom: 30px;
+    margin: 0px;
+    color: rgb(78, 151, 251);
+    font-size: 26px;
+    background-color: rgb(234, 241, 249);
+}
+
+.question_body {
+    margin: 30px;
+}
+
+.question_box1,
+.question_box2 {
+    margin-bottom: 10px;
+}
+
+.question_box1 {
+    font-size: 18px;
+    display: flex;
+    font-weight: bold;
+}
+
+.question_box2 {
+    padding-left: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    max-width: 200px;
+    border-radius: 5px;
+    min-height: 30px;
+    padding-top: 6px;
+    padding-left: 10px;
+    color: rgb(69, 73, 74);
+    display: flex;
+}
+
+label:hover {
+    background-color: rgb(148, 221, 253);
+}
+
+input[type="text"] {
+    height: 22px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    outline: none;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+}
+
+textarea {
+    width: 100%;
+    max-width: 500px;
+    max-height: 100px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    font-size: 16px;
+    outline-color: rgb(148, 221, 253);
+    /* 设置文本域不能拖动 */
+    resize: none;
+}
+
+/* 红色的星星 */
+.asterisk {
+    color: #ff6d57;
+    margin-left: 3px;
+}
+
+.btn1 {
+    width: 150px;
+    height: 50px;
+    background-color: rgb(148, 221, 253);
+    border: none;
+    outline: none;
+    color: gray;
+    border-radius: 5px;
+}
+
+.btn1:hover {
+    background-color: rgb(70, 98, 217);
+    cursor: pointer;
+    color: #fff;
+}
+
+.submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-direction: column;
+}
+
+#selectClass {
+    width: 176px;
+    height: 31px;
+    font-size: 16px;
+    font-weight: 600;
+    outline-color: rgb(0, 151, 255);
+    padding-left: 12px;
+    border: 1px solid rgb(0, 151, 255);
+    border-radius: 5px;
+}
+
+#selectClass option {
+    padding: 10px;
+}
+
+
+@media screen and (max-width: 600px) {
+    h1 {
+        background-image: url(../img/banner_img_2.jpg);
+        background-size: 100%;
+        padding: 10%;
+        margin: 0px;
+        color: rgb(78, 151, 251);
+        font-size: 26px;
+    }
+
+    #bgc {
+        display: none;
+    }
+
+}
+
+.returnMessage {
+    text-align: center;
+    font-size: 26px;
+    padding: 30px;
+    color: skyblue;
+    font-weight: 500;
+    text-shadow: 1px 2px 2px lightblue;
+}

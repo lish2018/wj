@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csxh.dao.AnswerDao">
+
+	<insert id="addAnswer" parameterType="answer" >
+		INSERT INTO `answer` (`teamId`,`ip`,`questionnaireId`,`commitTime`,`radio`,`checkbox`,`text`,`key`,`score`)
+					VALUES(#{team.id},#{ip},#{questionnaire.id},#{commitTime},#{radio},#{checkbox},#{text},#{key},#{score} );
+	</insert>
+	
+	<!-- 分页用　获取通过班级ID和问卷ID筛选后的记录条数 -->
+	<select id="getCount" resultType="int">
+		SELECT
+			count(0)
+		FROM
+		  `answer`
+		<where>
+			<if test="teamId != null">
+				teamId = #{teamId}
+			</if>
+			<if test="questionnaireId != null">
+				and `questionnaireId`=#{questionnaireId}
+			</if>
+			<if test="beginTime != null">
+				and `commitTime` &gt;= #{beginTime} 
+			</if>
+			<if test="endTime != null">
+				and `commitTime` &lt;= #{endTime} 
+			</if>
+			<if test="scoreStart != null">
+				and `score` &gt;= #{scoreStart} 
+			</if>
+			<if test="scoreEnd != null">
+				and `score` &lt;= #{scoreEnd} 
+			</if>
+		</where>
+	</select>
+
+	<!-- 分页用 获取通过班级ID和问卷ID和分页筛选后的记录 -->
+	<select id="listAnswerByPageAndTeamId" parameterType="map" resultType="answer">
+		SELECT
+		  `Id`,
+		  `teamId`,
+		  `ip`,
+		  `questionnaireId`,
+		  `commitTime`,
+		  `radio`,
+		  `checkbox`,
+		  `text`,
+		  `key`
+		FROM `answer`
+		<where>
+			<if test="teamId != null">
+				`teamId`=#{teamId}
+			</if>
+			<if test="questionnaireId != null">
+				and `questionnaireId`=#{questionnaireId}
+			</if>
+			<if test="beginTime != null">
+				and `commitTime` &gt;= #{beginTime} 
+			</if>
+			<if test="endTime != null">
+				and `commitTime` &lt;= #{endTime} 
+			</if>
+			<if test="scoreStart != null">
+				and `score` &gt;= #{scoreStart} 
+			</if>
+			<if test="scoreEnd != null">
+				and `score` &lt;= #{scoreEnd} 
+			</if>
+		</where>
+		ORDER BY `Id` 
+		LIMIT #{start}, #{number};
+	</select>
+	
+	
+</mapper>

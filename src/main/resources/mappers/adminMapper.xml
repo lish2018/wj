@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csxh.dao.AdminDao">
+<!-- 增 -->
+	<!-- 新增管理员 -->
+	<insert id="createAdmin" parameterType="admin">
+		INSERT INTO `admin` (`adminname`,`password`,`email`,`flag`,`phone`,`salt`,`roleId`)
+					VALUES(#{adminname},#{password},#{email},0,#{phone},#{salt},#{role.id});
+	</insert>
+	
+<!-- 删 -->
+	<!-- 删除管理员 -->
+	<delete id="deleteAdmin" parameterType="admin">
+		delete from admin where `adminname` = #{adminname}
+	</delete>
+<!-- 改 -->
+	<!-- 修改密码 -->
+	<update id="changePassword" parameterType="string">
+		update admin SET `password` = #{newPassword} where `adminname` = #{adminname} ;
+	</update>
+	<!--修改管理员信息-->
+	<update id="updateAdmin" parameterType="admin">
+		UPDATE `admin` SET email=#{email},phone=#{phone} where adminname=#{adminname}; 
+	</update>
+	<!--修改管理员信息-->
+	<update id="changeAdmin" parameterType="admin">
+		UPDATE `admin` SET email=#{email},phone=#{phone},roleId=#{role.id} where adminname=#{adminname}; 
+	</update>
+	
+<!-- 查 -->
+	<!-- 根据管理员id查信息 -->
+	<select id="findAdmin" parameterType="admin" resultType="admin">
+		Select * from `admin` where adminId = #{adminId} 
+	</select>
+	<!-- 无条件查询所有管理员信息 -->
+	<select id="findAll" parameterType="admin" resultType="admin">
+		select *  from `admin`
+	</select>
+	<!-- 根据用户名查询管理员信息 -->
+	<select id="findAdminByAdminname" parameterType="string" resultType="admin">
+		select * from `admin` where adminname=#{adminname} 
+	</select>
+	
+	<resultMap type="admin" id="adminMap">
+		<id property="id" column="id"/>
+		<result property="adminname" column="adminname"/>
+		<result property="password" column="passowrd"/>
+		<result property="email" column="email"/>
+		<result property="phone" column="phone"/>
+		<result property="salt" column="salt"/>
+		<result property="flag" column="flag"/>
+		<association property="role" javaType="role">
+			<id property="" column=""/>
+			<result property="" column=""/>
+			<result property="" column=""/>
+			<result property="" column=""/>
+			<result property="" column=""/>
+			<result property="" column=""/>
+		</association>
+	</resultMap>
+	
+	<!-- 根据邮箱查询管理员信息 -->
+	<select id="findAdminByEmail" parameterType="string" resultType="admin">
+		select * from `admin` where email=#{email} 
+	</select>
+	<!-- 根据管理员名字查询管理员角色 -->
+	<select id="findRoles" parameterType="string" resultType="string">
+		SELECT role_name FROM role LEFT JOIN admin ON role.id = admin.roleId WHERE admin.`adminname` = #{adminname};  
+	</select>
+	<!-- 根据管理员名查找权限名称 -->
+	<select id="findPermissions" parameterType="string" resultType="string">
+		SELECT 
+			perm
+			FROM admin a
+			LEFT JOIN role r ON a.roleId=r.id 
+			LEFT JOIN role_resource rr ON r.id = rr.roleId
+			LEFT JOIN resource re ON rr.resourceId = re.id 
+			WHERE adminname = #{adminname} 
+	</select>
+	
+	<!-- 新增管理员日志 -->
+	<insert id="insertAdminLog" parameterType="log">
+		INSERT INTO `log` (`adminId`,`ip`,`type`,`time`,`Column3`)
+					VALUES(#{admin.id},#{ip},#{type},NOW(),#{Column3});
+	</insert>
+	
+	
+</mapper>

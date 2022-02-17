@@ -1,0 +1,42 @@
+.Cbox{
+		width: 850px;
+		background-color: #FFE4E1;
+		border:solid 1px #C0FF3E ;
+	}
+	.Cbox span{
+		font:bold 14px '宋体';
+	}
+	.lll .header{
+		margin-left: 40px;
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+	.lll .body1{
+		margin-left: 40px;
+		margin-top: 20px;
+		margin-bottom: 20px;
+		font:normal 14px '宋体';
+	}
+	.lll .body1 input{
+		vertical-align: auto;
+	}
+	.lll .body3{
+		font:normal 12px '宋体';
+		margin-left: 40px;
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+	
+	.lll .btn{
+		width: 754px;
+		font:bold 14px '宋体';
+		color: #F5FFFA;
+		background-color: #CDC673;
+		border: solid 1px #FFE4B5;
+	}
+	.lll .btn:hover{
+		background-color: orange;
+	}
+	.lll .body1 .text{
+		height: 28px;
+	}

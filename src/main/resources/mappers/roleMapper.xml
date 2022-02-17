@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csxh.dao.RoleDao">
+<!-- 增 -->
+	<!-- 新增角色 -->
+	<insert id="createRole" parameterType="role" useGeneratedKeys="true" keyProperty="role.id" keyColumn="id">
+	
+		insert into `role` (`role_name`,`remark`,`flag`)
+					VALUES(#{role.roleName},#{role.remark},0);
+	</insert>
+	<!-- 添加角色权限关联 -->
+	<insert id="addResourcesRef" parameterType="java.util.List">
+		INSERT INTO `role_resource` (`roleId`, `resourceId`) 
+		VALUES 
+		<foreach collection="list" item="rr" index="index" separator=",">
+			(
+				#{rr.roleId}, 
+				#{rr.resourceId} 
+			)
+		</foreach>
+	</insert>
+	
+	<select id="getAdminCountByRoleId" parameterType="int" resultType="int">
+		select count(1) from admin where roleId=${roleId}
+	</select>
+	
+	<!-- 删 -->
+	<!-- 根据id删除角色 -->
+	<delete id="deleteRole" parameterType="int">
+		delete from role where id=#{roleId};
+	</delete>
+	
+	<delete id="deleteResoueceRefByRoleId" parameterType="int">
+		delete from role_resource where roleId = #{roleId}
+	</delete>
+	
+	<!-- 改 -->
+	<!-- 根据id来更新角色信息 -->
+	<update id="updateRole" parameterType="role">
+		update role set role_name=#{roleName}, remark=#{remark},flag=0 where id=#{id}; 
+	</update>
+	
+	<!-- 查 -->
+	<!-- 根据管理员id查信息 -->
+	<select id="findRole" parameterType="role" resultMap="roleMap">
+		Select * from role where id=#{roleId}; 
+	</select>
+	
+	<select id="checkRepeat" parameterType="role" resultMap="roleMap">
+		Select * from role where role_name = #{roleName}
+	</select>
+	
+	<select id="findAll" resultMap="roleMap">
+		select * from role;
+	</select>
+	
+	<select id="getAllResources" resultMap="resourceMap">
+		select * from resource
+	</select>
+	
+	
+  	<resultMap type="com.csxh.entity.Role" id="roleMap">
+		<id property="id" column="id" />
+		<result property="roleName" column="role_name" />
+		<result property="remark" column="remark" />
+		<result property="flag" column="flag" />
+	</resultMap>
+	
+  	<resultMap type="com.csxh.entity.Resource" id="resourceMap">
+		<id property="id" column="id" />
+		<result property="resName" column="res_name" />
+		<result property="permName" column="perm_name" />
+		<result property="perm" column="perm" />
+		<result property="flag" column="flog" />
+	</resultMap>
+	
+	<select id="findRoleByName" parameterType="map" resultMap="roleMap">
+		select 
+			ro.id,
+			ro.role_name,
+			ro.remark,
+			ro.flag
+		from role ro
+		
+		<where>
+			<if test="permName != null">
+				ro.role_name like concat('%', #{permName}, '%');
+			</if>
+		</where>
+	</select>
+	
+	<!-- <select id="findRoleByName" parameterType="map" resultType="role">
+		select 
+			ro.id,
+			ro.role_name,
+			ro.remark,
+			ro.flag,
+			re.`id`,
+			re.`res_name`,
+			re.`perm_name`,
+			re.`perm`,
+			re.`flog` 
+		from role ro
+		left join role_resource rr on ro.id = rr.`roleId`
+		left join resource re on rr.`resourceId` = re.`id` 
+		
+		<where>
+			<if test="permName != null">
+				ro.role_name like concat('%', #{permName}, '%');
+			</if>
+		</where>
+	</select> -->
+	
+	<select id="getRoleResources" parameterType="int" resultMap="resourceMap">
+		SELECT
+		  re.`id`,
+		  re.`res_name`,
+		  re.`perm_name`,
+		  re.`perm`,
+		  re.`flog`
+		FROM
+		  `resource` re
+		LEFT JOIN role_resource rr ON re.`id`=rr.`resourceId`
+		WHERE rr.`roleId` = #{roleId}
+	</select>
+	
+</mapper>
